@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import User from "../entities/user.entity"; // Import your User model
 import { UserRepository } from "../repository";
-
+import { errorHandlingMiddleware } from "../middleware/errorHandlingMiddleware";
 // Get all users
 // export const getAllUsers = async (req: Request, res: Response) => {
 //   try {
@@ -36,16 +35,10 @@ import { UserRepository } from "../repository";
 // };
 
 // Create a new user
-// export const createUser = async (req: Request, res: Response) => {
-//   const { fullName, address } = req.body;
-//   try {
-//     const newUser = await UserRepository.save({ fullName, address });
-//     res.json(newUser);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
+export const createUser = errorHandlingMiddleware(async (req: Request, res: Response) => {
+  const newUser = await UserRepository.save(req.body);
+  res.status(201).json(newUser);
+});
 
 // Update a user by ID
 // export const updateUser = async (req: Request, res: Response) => {

@@ -1,6 +1,10 @@
 import express from "express";
 import * as bodyParser from "body-parser";
 import { DatabaseConfig } from "./config/database";
+
+import { validateEntity } from "./middleware/validation.middleware";
+
+// routes import
 import userRoutes from "./routes/userRoutes";
 // import postRoutes from "./routes/postRoutes";
 
