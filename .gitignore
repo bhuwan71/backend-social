@@ -1,0 +1,22 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore built JavaScript files and source maps
+dist/
+*.js.map
+
+# Ignore environment-specific config files
+.env
+
+# Ignore log files and other runtime-generated files
+logs/
+*.log
+
+# Ignore any OS or editor-specific files
+.DS_Store
+.vscode/
+.idea/
+
+# Ignore npm and Yarn lock files
+package-lock.json
+yarn.lock
