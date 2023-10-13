@@ -18,7 +18,7 @@ import {
 @Unique(["email"])
 export default class User extends Base {
     @Column({
-        name: "full_name",
+        name: "first_name",
         type: "varchar",
         length: 50,
     })

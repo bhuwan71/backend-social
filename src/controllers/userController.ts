@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserRepository } from "../repository";
 import { errorHandlingMiddleware } from "../middleware/errorHandlingMiddleware";
+import { hashPassword } from "../utils/bcryptUtils";
 // Get all users
 // export const getAllUsers = async (req: Request, res: Response) => {
 //   try {
@@ -36,8 +37,22 @@ import { errorHandlingMiddleware } from "../middleware/errorHandlingMiddleware";
 
 // Create a new user
 export const createUser = errorHandlingMiddleware(async (req: Request, res: Response) => {
-  const newUser = await UserRepository.save(req.body);
-  res.status(201).json(newUser);
+
+  const { firstName, lastName, username, mobile, email, passwordHash } = req.body;
+
+  const hashedPassword = await hashPassword(passwordHash);
+
+  const newUser = UserRepository.create({
+    firstName: firstName,
+    lastName: lastName,
+    username: username,
+    mobile: mobile,
+    email: email,
+    passwordHash: hashedPassword,
+  });
+  const createdUser = await UserRepository.save(newUser);
+  res.status(201).json(createdUser);
+
 });
 
 // Update a user by ID

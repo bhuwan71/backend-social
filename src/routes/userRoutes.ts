@@ -7,7 +7,7 @@ const router = express.Router();
 // Define user routes
 // router.get("/", UserController.getAllUsers);
 // router.get("/:id", UserController.getUserById);
-router.post('/', validateEntity(User), UserController.createUser);
+router.post('/createUser', validateEntity(User), UserController.createUser);
 // router.put("/:id", UserController.updateUser);
 // router.delete("/:id", UserController.deleteUser);
 
