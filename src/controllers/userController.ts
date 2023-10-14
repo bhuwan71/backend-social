@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { UserRepository } from "../repository";
 import { errorHandlingMiddleware } from "../middleware/errorHandlingMiddleware";
-import { hashPassword } from "../utils/bcryptUtils";
-import { checkFieldsUniqueness } from "../utils/checkFieldsUniqueness";
+
+interface CustomRequest extends Request {
+    user?: any; // Add your custom property here
+}
 // Get all users
 // export const getAllUsers = async (req: Request, res: Response) => {
 //   try {
@@ -18,51 +20,25 @@ import { checkFieldsUniqueness } from "../utils/checkFieldsUniqueness";
 // };
 
 // Get a user by ID
-// export const getUserById = async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   try {
-//     const user = await UserRepository.findOne({
-//       where: {
-//         id: +id,
-//       },
-//     });
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-//     res.json(user);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
+export const getUserById = errorHandlingMiddleware(async (req: CustomRequest, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const userIdFromToken = req.user.userid;
 
-// Create a new user
-export const createUser = errorHandlingMiddleware(async (req: Request, res: Response): Promise<void> => {
+    // Check if the user ID from the token matches the requested user ID
+    if (userIdFromToken !== +id) {
+        res.status(403).json({ message: 'Access denied' });
+        return
+    }
+    const user = await UserRepository.createQueryBuilder('users')
+        .select(['users.id', 'users.username', 'users.email', 'users.firstName', 'users.middleName', 'users.lastName'])
+        .where('users.id = :id', { id: +id })
+        .getOne();
 
-  const { firstName, lastName, username, mobile, email, passwordHash } = req.body;
-
-  const usernameError = await checkFieldsUniqueness(UserRepository, 'username', username);
-  const emailError = await checkFieldsUniqueness(UserRepository, 'email', email);
-  const mobileError = await checkFieldsUniqueness(UserRepository, 'mobile', mobile);
-
-  if (usernameError || emailError || mobileError) {
-    // remove an empty string from filter method 🤔
-    res.status(400).json({ message: [usernameError, emailError, mobileError].filter(Boolean).join(', ') });
-    return;
-  }
-
-  const hashedPassword = await hashPassword(passwordHash);
-  const newUser = UserRepository.create({
-    firstName: firstName,
-    lastName: lastName,
-    username: username,
-    mobile: mobile,
-    email: email,
-    passwordHash: hashedPassword,
-  });
-  await UserRepository.save(newUser);
-  res.status(201).json({ message: "Created User Successfully !!" });
-
+    if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return
+    }
+    res.json(user);
 });
 
 // Update a user by ID
