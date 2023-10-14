@@ -1,8 +1,6 @@
 import express from "express";
 import * as bodyParser from "body-parser";
 import { DatabaseConfig } from "./config/database";
-
-
 // routes import
 import userRoutes from "./routes/userRoutes";
 // import postRoutes from "./routes/postRoutes";
@@ -12,7 +10,7 @@ const port = process.env.PORT || 5000;
 
 DatabaseConfig.initialize()
   .then(() => {
-    console.log("DB connected !!");
+    console.log("DB connected successfully !!");
   })
   .catch((error) => {
     console.error("Error connecting to the database:", error);
