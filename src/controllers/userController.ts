@@ -20,7 +20,7 @@ interface CustomRequest extends Request {
 // };
 
 // Get a user by ID
-export const getUserById = errorHandlingMiddleware(async (req: CustomRequest, res: Response): Promise<void> => {
+export const getProfile = errorHandlingMiddleware(async (req: CustomRequest, res: Response): Promise<void> => {
     const { id } = req.params;
     const userIdFromToken = req.user.userid;
 
