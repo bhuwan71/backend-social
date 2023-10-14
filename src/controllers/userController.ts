@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { UserRepository } from "../repository";
 import { errorHandlingMiddleware } from "../middleware/errorHandlingMiddleware";
 import { hashPassword } from "../utils/bcryptUtils";
+import { checkFieldsUniqueness } from "../utils/checkFieldsUniqueness";
 // Get all users
 // export const getAllUsers = async (req: Request, res: Response) => {
 //   try {
@@ -36,12 +37,21 @@ import { hashPassword } from "../utils/bcryptUtils";
 // };
 
 // Create a new user
-export const createUser = errorHandlingMiddleware(async (req: Request, res: Response) => {
+export const createUser = errorHandlingMiddleware(async (req: Request, res: Response): Promise<void> => {
 
   const { firstName, lastName, username, mobile, email, passwordHash } = req.body;
 
-  const hashedPassword = await hashPassword(passwordHash);
+  const usernameError = await checkFieldsUniqueness(UserRepository, 'username', username);
+  const emailError = await checkFieldsUniqueness(UserRepository, 'email', email);
+  const mobileError = await checkFieldsUniqueness(UserRepository, 'mobile', mobile);
 
+  if (usernameError || emailError || mobileError) {
+    // remove an empty string from filter method 🤔
+    res.status(400).json({ message: [usernameError, emailError, mobileError].filter(Boolean).join(', ') });
+    return;
+  }
+
+  const hashedPassword = await hashPassword(passwordHash);
   const newUser = UserRepository.create({
     firstName: firstName,
     lastName: lastName,
@@ -50,8 +60,8 @@ export const createUser = errorHandlingMiddleware(async (req: Request, res: Resp
     email: email,
     passwordHash: hashedPassword,
   });
-  const createdUser = await UserRepository.save(newUser);
-  res.status(201).json(createdUser);
+  await UserRepository.save(newUser);
+  res.status(201).json({ message: "Created User Successfully !!" });
 
 });
 
