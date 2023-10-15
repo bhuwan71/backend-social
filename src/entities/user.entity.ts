@@ -1,16 +1,15 @@
-import { Column, Entity, OneToMany, Unique } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, Unique } from "typeorm";
 import Base from "./base.entity";
 import Post from "./post.entity";
+import { Like } from "./like.entity";
+import { Role } from "./role.entity"
 import {
     IsEmail,
     IsNotEmpty,
-    IsInt,
-    Min,
-    Max,
-    MaxLength,
     MinLength,
     Matches,
 } from "class-validator";
+import { Comment } from "./comment.entity";
 
 @Entity("users")
 @Unique(["username"])
@@ -31,7 +30,7 @@ export default class User extends Base {
         type: "varchar",
         length: 50,
         nullable: true,
-        default: null,
+        default: " ",
     })
     middleName: string;
 
@@ -67,12 +66,44 @@ export default class User extends Base {
     @Column({ type: "timestamp", nullable: true, default: null })
     lastLogin: Date | null;
 
-    @Column({ type: "text", nullable: true, default: null })
-    intro: string | null;
+    @Column({ nullable: true, default: 0 })
+    followingCount: number
 
-    @Column({ type: "text", nullable: true, default: null })
-    profile: string | null;
+    @Column({ nullable: true, default: 0 })
+    followersCount: number
 
-    @OneToMany(() => Post, (post) => post.user)
-    posts: Post[] | number[];
+    @Column({ nullable: true, default: 0 })
+    postCount: number
+
+    @Column({ nullable: true, default: " " })
+    location: string
+
+    @Column({ type: "timestamp", nullable: true, default: null })
+    dateOfBirth: string
+
+    @Column({ type: "text", nullable: true, default: " " })
+    bio: string | null;
+
+    @Column({ type: "text", nullable: true, default: " " })
+    website: string | null;
+
+    @Column({ type: "text", nullable: true, default: " " })
+    profileImage: string | null;
+
+
+    // Relations
+
+    @OneToMany(() => Post, post => post.author)
+    posts: Post[];
+
+    @OneToMany(() => Comment, comment => comment.user)
+    comments: Comment[];
+
+    @OneToMany(() => Like, like => like.user)
+    likes: Like[];
+
+    @ManyToMany(() => Role)
+    @JoinTable()
+    roles: Role[];
+
 }

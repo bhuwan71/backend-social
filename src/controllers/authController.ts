@@ -48,7 +48,7 @@ export const login = errorHandlingMiddleware(async (req: Request, res: Response)
 
     if (!user) {
         res.status(401).json({ message: 'Invalid credentials User Does not exist' });
-        return
+        return;
     }
 
     // compare passwords 

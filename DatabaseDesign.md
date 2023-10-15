@@ -23,7 +23,7 @@
   - `content` (text, multimedia content, or reference to an external URL)
   - `created_at`
   - `updated_at`
-  - `user_id` (Foreign key referencing the User table)
+  - `user_id` (Foreign key referencing the User table) //author
   - `likes_count`
   - `comments_count`
   - `shares_count`
@@ -100,6 +100,7 @@
   - `group_id` (Foreign key referencing the Group table)
   - `user_id` (Foreign key referencing the User table)
   - `joined_at`
+  - `leave_at`
 
 ### Notification Table
 
@@ -116,6 +117,7 @@
 - Columns:
   - `id` (Primary key)
   - `name` (Unique)
+
 
 ### PostHashtag Table (many-to-many relationship between Post and Hashtag)
 

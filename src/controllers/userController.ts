@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserRepository } from "../repository";
 import { errorHandlingMiddleware } from "../middleware/errorHandlingMiddleware";
+import User from "../entities/user.entity";
 
 interface CustomRequest extends Request {
     user?: any; // Add your custom property here
@@ -29,15 +30,16 @@ export const getProfile = errorHandlingMiddleware(async (req: CustomRequest, res
         res.status(403).json({ message: 'Access denied' });
         return
     }
-    const user = await UserRepository.createQueryBuilder('users')
+    const user: User = await UserRepository.createQueryBuilder('users')
         .select(['users.id', 'users.username', 'users.email', 'users.firstName', 'users.middleName', 'users.lastName'])
         .where('users.id = :id', { id: +id })
-        .getOne();
+        .getOneOrFail();
 
     if (!user) {
         res.status(404).json({ error: "User not found" });
         return
     }
+    
     res.json(user);
 });
 
