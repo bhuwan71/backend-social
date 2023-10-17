@@ -13,7 +13,7 @@ import { DataSource } from 'typeorm';
 
 export const DatabaseConfig = new DataSource({
   type: "postgres",
-  database: "networkPeople",
+  database: "network",
   username: "postgres",
   password: "12345",
   host: "localhost", // Use IPv4 address

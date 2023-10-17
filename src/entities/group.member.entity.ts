@@ -3,7 +3,6 @@ import {
     ManyToOne,
     JoinColumn,
     Column,
-    CreateDateColumn,
 } from 'typeorm';
 import { Group } from './group.entity';
 import User from './user.entity';
@@ -20,9 +19,9 @@ export class GroupMember extends Base {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @CreateDateColumn()
-    joined_at: Date;
+    @Column({ type: "timestamp", nullable: true, default: null })
+    joined_at: Date | null;
 
-    @Column({ type: 'datetime', nullable: true })
-    leave_at: Date;
+    @Column({ type: "timestamp", nullable: true, default: null })
+    leave_at: Date | null;
 }

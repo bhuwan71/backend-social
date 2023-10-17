@@ -3,12 +3,6 @@ import Base from "./base.entity";
 import Post from "./post.entity";
 import { Like } from "./like.entity";
 import { Role } from "./role.entity"
-import {
-    IsEmail,
-    IsNotEmpty,
-    MinLength,
-    Matches,
-} from "class-validator";
 import { Comment } from "./comment.entity";
 
 @Entity("users")
@@ -21,8 +15,6 @@ export default class User extends Base {
         type: "varchar",
         length: 50,
     })
-    @IsNotEmpty({ message: "First name is required" })
-    @MinLength(2, { message: "First name must be at least 2 characters" })
     firstName: string;
 
     @Column({
@@ -39,28 +31,19 @@ export default class User extends Base {
         type: "varchar",
         length: 50,
     })
-    @IsNotEmpty({ message: "Last name is required" })
-    @MinLength(2, { message: "Last name must be at least 2 characters" })
     lastName: string;
 
     @Column({ type: "varchar", length: 50 })
-    @IsNotEmpty({ message: "User name is required" })
     username: string | null;
 
     @Column({ type: "varchar", length: 100 })
-    @IsNotEmpty({ message: "Email is required" })
-    @IsEmail({}, { message: "Invalid email format" })
     email: string;
 
     @Column({ type: "varchar", length: 15, nullable: true })
     mobile: string | null;
 
     @Column({ type: "varchar" })
-    @IsNotEmpty({ message: "Password is required" })
-    @MinLength(8, { message: "Password must be at least 8 characters" })
-    @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).*$/, {
-        message: "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
-    })
+
     passwordHash: string;
 
     @Column({ type: "timestamp", nullable: true, default: null })
@@ -105,5 +88,35 @@ export default class User extends Base {
     @ManyToMany(() => Role)
     @JoinTable()
     roles: Role[];
+
+
+    validate() {
+        const errors = [];
+
+        if (!this.firstName || this.firstName.length < 2) {
+            errors.push('First name must be at least 2 characters');
+        }
+
+        if (!this.lastName || this.lastName.length < 2) {
+            errors.push('Last name must be at least 2 characters');
+        }
+
+        // Email validation using a simple regex pattern
+        const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+        if (!this.email || !emailPattern.test(this.email)) {
+            errors.push('Invalid email format');
+        }
+
+        // Strong password validation
+        // Requires at least one lowercase letter, one uppercase letter, one digit, and one special character
+        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).*$/;
+        if (!this.passwordHash || this.passwordHash.length < 8 || !passwordPattern.test(this.passwordHash)) {
+            errors.push('Password must be at least 8 characters and contain one lowercase letter, one uppercase letter, one digit, and one special character');
+        }
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(', '));
+        }
+    }
 
 }

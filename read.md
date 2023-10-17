@@ -5,12 +5,15 @@ https://mysql.tutorials24x7.com/blog/guide-to-design-database-for-social-network
 # fisrt_user data example
 
 {
-"firstName":"Karan",
-"lastName":"chettri",
-"username": "karan@12",
-"mobile": "32349812",
-"email": "karan1@example.com",
-"passwordHash": "Lifehacker123@gmail.com"
+"firstName":"Bhumika",
+"lastName":"K.c",
+"username": "bhumika@1",
+"mobile": "9822560321",
+"email": "bhumika@gmail.com",
+"passwordHash": "Lifeh@cker12345",
+"lastLogin": "",
+"bio": "",
+"profile": ""
 }
 
 <!-- database hosting Elephent SQL -->

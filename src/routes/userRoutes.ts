@@ -4,8 +4,12 @@ import { authenticateToken } from "../middleware/authenticateToken";
 
 const router = express.Router();
 
+// post routes
+router.post("/upDateProfile", authenticateToken as any, UserController.updateProfile)
+
+
+// get Routes
 router.get("/profile/:id", authenticateToken as any, UserController.getProfile);
-// router.get("/me/:id", UserController.getUserById);
 
 
 export default router;

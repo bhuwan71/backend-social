@@ -16,5 +16,5 @@ export class FriendRequest extends Base {
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'receiver_id' })
     receiver: User;
-   
+
 }
