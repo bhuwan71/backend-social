@@ -44,6 +44,7 @@ export const register = errorHandlingMiddleware(async (req: Request, res: Respon
 // login function
 
 export const login = errorHandlingMiddleware(async (req: Request, res: Response): Promise<void> => {
+    
     const { username, passwordHash } = req.body;
 
     if (!username || !passwordHash) {

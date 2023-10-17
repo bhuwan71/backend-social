@@ -2,16 +2,27 @@ import { Request, Response } from 'express';
 import { errorHandlingMiddleware } from '../middleware/errorHandlingMiddleware';
 import { PostRepository } from '../repository';
 
-// // Get all posts
-// export const getAllPosts = async (req: Request, res: Response) => {
-//   try {
-//     const posts = await Post.findAll();
-//     res.json(posts);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
+interface CustomRequest extends Request {
+    user?: any; // Add your custom property here
+}
+
+// Get all posts infinite scroll
+export const getAllPosts = errorHandlingMiddleware(async (req: Request, res: Response) => {
+    const { page, pageSize } = req.body;
+    const pageNumber = parseInt(page as string) || 1;
+    const size = parseInt(pageSize as string) || 1;
+    const [posts, count] = await PostRepository.findAndCount({
+        take: size,
+        skip: (pageNumber - 1) * size,
+        order: {
+            createdAt: 'DESC',
+        },
+    });
+    res.json({
+        posts,
+        count,
+    });
+});
 
 // // Get a post by ID
 // export const getPostById = async (req: Request, res: Response) => {
@@ -29,13 +40,17 @@ import { PostRepository } from '../repository';
 // };
 
 // Create a new post
-export const createPost = errorHandlingMiddleware(async (req: Request, res: Response) => {
-    const { content, id, title } = req.body;
-    const newPost = await PostRepository.create({
+export const createPost = errorHandlingMiddleware(async (req: CustomRequest, res: Response) => {
+    const { content, title, postImage } = req.body;
+    const userIdFromToken = req.user.userid;
+    const newPost = PostRepository.create({
+        author: userIdFromToken,
+        title,
         content,
-        id,
+        postImage
     });
-    res.json(newPost);
+    await PostRepository.save(newPost);
+    res.status(201).json({ message: "Post Create Successfully !!" });
 });
 
 // // Update a post by ID
