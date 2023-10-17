@@ -59,17 +59,23 @@ export const getProfile = errorHandlingMiddleware(async (req: CustomRequest, res
 });
 
 // Update a user by ID
-export const updateProfile = errorHandlingMiddleware(async (req: Request, res: Response): Promise<void> => {
+export const updateProfile = errorHandlingMiddleware(async (req: CustomRequest, res: Response): Promise<void> => {
 
     const { id, username, email, firstName, middleName, lastName, mobile, location, dateOfBirth, bio, website, profileImage } = req.body;
 
+    // check access or not user to perform action
+    const userIdFromToken = req.user.userid;
+    // Check if the user ID from the token matches the requested user ID
+    if (userIdFromToken !== +id) {
+        res.status(403).json({ message: 'Access denied' });
+        return
+    }
     const allowedFields = ['id', 'username', 'email', 'firstName', 'middleName', 'lastName', 'mobile', 'location', 'dateOfBirth', 'bio', 'website', 'profileImage'];
     const disallowedFields = Object.keys(req.body).filter(field => !allowedFields.includes(field));
     if (disallowedFields.length > 0) {
         res.status(400).json({ error: `Updating '${disallowedFields.join(', ')}' is not allowed` });
         return;
     }
-
     const updateResult = await UserRepository
         .createQueryBuilder()
         .update(User)

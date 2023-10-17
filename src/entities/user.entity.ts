@@ -90,8 +90,8 @@ export default class User extends Base {
     roles: Role[];
 
 
-    validate() {
-        const errors = [];
+    validate(): string[] {
+        const errors: string[] = [];
 
         if (!this.firstName || this.firstName.length < 2) {
             errors.push('First name must be at least 2 characters');
@@ -107,16 +107,8 @@ export default class User extends Base {
             errors.push('Invalid email format');
         }
 
-        // Strong password validation
-        // Requires at least one lowercase letter, one uppercase letter, one digit, and one special character
-        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).*$/;
-        if (!this.passwordHash || this.passwordHash.length < 8 || !passwordPattern.test(this.passwordHash)) {
-            errors.push('Password must be at least 8 characters and contain one lowercase letter, one uppercase letter, one digit, and one special character');
-        }
-
-        if (errors.length > 0) {
-            throw new Error(errors.join(', '));
-        }
+        return errors;
     }
+
 
 }

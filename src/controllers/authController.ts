@@ -29,7 +29,13 @@ export const register = errorHandlingMiddleware(async (req: Request, res: Respon
         email: email,
         passwordHash: hashedPassword,
     });
-    newUser.validate();
+    
+    const validationErrors = newUser.validate();
+
+    if (validationErrors.length > 0) {
+        res.status(400).json({ errors: validationErrors });
+        return
+    }
     await UserRepository.save(newUser);
     res.status(201).json({ message: "Register User Successfully !!" });
 

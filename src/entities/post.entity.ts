@@ -21,6 +21,10 @@ export default class Post extends Base {
     @Column({ nullable: true, default: 0 })
     sharesCount: number
 
+    @Column({ type: "text", nullable: true, default: " " })
+    postImage: string | null;
+
+
     // Relations
     @ManyToOne(() => User, user => user.posts)
     author: User;

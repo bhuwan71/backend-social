@@ -1,5 +1,6 @@
-// import { Request, Response } from 'express';
-// import { Post } from '../entities/post'; // Import your Post model
+import { Request, Response } from 'express';
+import { errorHandlingMiddleware } from '../middleware/errorHandlingMiddleware';
+import { PostRepository } from '../repository';
 
 // // Get all posts
 // export const getAllPosts = async (req: Request, res: Response) => {
@@ -27,20 +28,15 @@
 //   }
 // };
 
-// // Create a new post
-// // export const createPost = async (req: Request, res: Response) => {
-// //   const { content, userId } = req.body;
-// //   try {
-// //     const newPost = await Post.create({
-// //       content,
-// //       userId,
-// //     });
-// //     res.json(newPost);
-// //   } catch (error) {
-// //     console.error(error);
-// //     res.status(500).json({ error: 'Internal server error' });
-// //   }
-// // };
+// Create a new post
+export const createPost = errorHandlingMiddleware(async (req: Request, res: Response) => {
+    const { content, id, title } = req.body;
+    const newPost = await PostRepository.create({
+        content,
+        id,
+    });
+    res.json(newPost);
+});
 
 // // Update a post by ID
 // export const updatePost = async (req: Request, res: Response) => {
