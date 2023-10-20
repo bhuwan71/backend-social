@@ -31,6 +31,10 @@ app.get("/", (req, res) => {
   res.send("App is working fine 👋 Welcome to the node app")
 })
 
+app.get("/profile", (req, res) => {
+  res.json({message:"hi this is your profile details"})
+})
+
 // Define your routes
 app.use("/api", userRoutes);
 app.use("/api/auth", authRoutes);
