@@ -3,6 +3,8 @@ import * as bodyParser from "body-parser";
 import { DatabaseConfig } from "./src/config/database";
 import userRoutes from "./src/routes/userRoutes";
 import authRoutes from "./src/routes/authRoutes";
+import postRoutes from "./src/routes/postRoutes";
+
 // import postRoutes from "./routes/postRoutes";
 import dotenv from 'dotenv';
 
@@ -28,6 +30,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Define your routes
 app.use("/api", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("", postRoutes);
+
 
 // app.use("/posts", postRoutes);
 

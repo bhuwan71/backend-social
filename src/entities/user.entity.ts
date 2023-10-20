@@ -1,16 +1,9 @@
-import { Column, Entity, OneToMany, Unique } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, Unique } from "typeorm";
 import Base from "./base.entity";
 import Post from "./post.entity";
-import {
-    IsEmail,
-    IsNotEmpty,
-    IsInt,
-    Min,
-    Max,
-    MaxLength,
-    MinLength,
-    Matches,
-} from "class-validator";
+import { Like } from "./like.entity";
+import { Role } from "./role.entity"
+import { Comment } from "./comment.entity";
 
 @Entity("users")
 @Unique(["username"])
@@ -22,8 +15,6 @@ export default class User extends Base {
         type: "varchar",
         length: 50,
     })
-    @IsNotEmpty({ message: "First name is required" })
-    @MinLength(2, { message: "First name must be at least 2 characters" })
     firstName: string;
 
     @Column({
@@ -31,7 +22,7 @@ export default class User extends Base {
         type: "varchar",
         length: 50,
         nullable: true,
-        default: null,
+        default: " ",
     })
     middleName: string;
 
@@ -40,39 +31,84 @@ export default class User extends Base {
         type: "varchar",
         length: 50,
     })
-    @IsNotEmpty({ message: "Last name is required" })
-    @MinLength(2, { message: "Last name must be at least 2 characters" })
     lastName: string;
 
     @Column({ type: "varchar", length: 50 })
-    @IsNotEmpty({ message: "User name is required" })
     username: string | null;
 
     @Column({ type: "varchar", length: 100 })
-    @IsNotEmpty({ message: "Email is required" })
-    @IsEmail({}, { message: "Invalid email format" })
     email: string;
 
     @Column({ type: "varchar", length: 15, nullable: true })
     mobile: string | null;
 
     @Column({ type: "varchar" })
-    @IsNotEmpty({ message: "Password is required" })
-    @MinLength(8, { message: "Password must be at least 8 characters" })
-    @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).*$/, {
-        message: "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character",
-    })
+
     passwordHash: string;
 
     @Column({ type: "timestamp", nullable: true, default: null })
     lastLogin: Date | null;
 
-    @Column({ type: "text", nullable: true, default: null })
-    intro: string | null;
+    @Column({ nullable: true, default: 0 })
+    followingCount: number
 
-    @Column({ type: "text", nullable: true, default: null })
-    profile: string | null;
+    @Column({ nullable: true, default: 0 })
+    followersCount: number
 
-    @OneToMany(() => Post, (post) => post.user)
-    posts: Post[] | number[];
+    @Column({ nullable: true, default: 0 })
+    postCount: number
+
+    @Column({ nullable: true, default: " " })
+    location: string
+
+    @Column({ type: "timestamp", nullable: true, default: null })
+    dateOfBirth: string
+
+    @Column({ type: "text", nullable: true, default: " " })
+    bio: string | null;
+
+    @Column({ type: "text", nullable: true, default: " " })
+    website: string | null;
+
+    @Column({ type: "text", nullable: true, default: " " })
+    profileImage: string | null;
+
+
+    // Relations
+
+    @OneToMany(() => Post, post => post.author)
+    posts: Post[];
+
+    @OneToMany(() => Comment, comment => comment.user)
+    comments: Comment[];
+
+    @OneToMany(() => Like, like => like.user)
+    likes: Like[];
+
+    @ManyToMany(() => Role)
+    @JoinTable()
+    roles: Role[];
+
+
+    validate(): string[] {
+        const errors: string[] = [];
+
+        if (!this.firstName || this.firstName.length < 2) {
+            errors.push('First name must be at least 2 characters');
+        }
+
+        if (!this.lastName || this.lastName.length < 2) {
+            errors.push('Last name must be at least 2 characters');
+        }
+
+        // Email validation using a simple regex pattern
+        const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+        if (!this.email || !emailPattern.test(this.email)) {
+            errors.push('Invalid email format');
+        }
+
+        return errors;
+    }
+
+
 }

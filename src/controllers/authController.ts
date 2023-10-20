@@ -29,6 +29,13 @@ export const register = errorHandlingMiddleware(async (req: Request, res: Respon
         email: email,
         passwordHash: hashedPassword,
     });
+    
+    const validationErrors = newUser.validate();
+
+    if (validationErrors.length > 0) {
+        res.status(400).json({ errors: validationErrors });
+        return
+    }
     await UserRepository.save(newUser);
     res.status(201).json({ message: "Register User Successfully !!" });
 
@@ -37,6 +44,7 @@ export const register = errorHandlingMiddleware(async (req: Request, res: Respon
 // login function
 
 export const login = errorHandlingMiddleware(async (req: Request, res: Response): Promise<void> => {
+    
     const { username, passwordHash } = req.body;
 
     if (!username || !passwordHash) {
@@ -48,7 +56,7 @@ export const login = errorHandlingMiddleware(async (req: Request, res: Response)
 
     if (!user) {
         res.status(401).json({ message: 'Invalid credentials User Does not exist' });
-        return
+        return;
     }
 
     // compare passwords 
@@ -58,8 +66,8 @@ export const login = errorHandlingMiddleware(async (req: Request, res: Response)
         return;
     }
 
-    const accessToken = generateAccessToken(username,user.id);
-    const refreshToken = generateRefreshToken(username,user.id);
+    const accessToken = generateAccessToken(username, user.id);
+    const refreshToken = generateRefreshToken(username, user.id);
 
     res.status(200).json(
         {
