@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get("/", (req, res) => {
-  res.send("App is working fine")
+  res.send("App is working fine 👋 Welcome to the node app")
 })
 
 // Define your routes
