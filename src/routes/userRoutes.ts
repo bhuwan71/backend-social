@@ -14,7 +14,4 @@ router.get("/profile/:id", authenticateToken as any, UserController.getProfile);
 
 
 
-
-
-
 export default router;
