@@ -27,6 +27,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+app.get("/",(req,res)=>{
+  res.send("App is working fine")
+})
+
 // Define your routes
 app.use("/api", userRoutes);
 app.use("/api/auth", authRoutes);

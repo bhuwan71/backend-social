@@ -12,4 +12,9 @@ router.post("/upDateProfile", authenticateToken as any, UserController.updatePro
 router.get("/profile/:id", authenticateToken as any, UserController.getProfile);
 
 
+
+
+
+
+
 export default router;
